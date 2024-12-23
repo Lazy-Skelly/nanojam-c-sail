@@ -6,7 +6,7 @@ void ReinitializeMap(Tile Map[WORLDSIZE][WORLDSIZE]){
 			Map[i][j].Type = BARREN;
 		}
 	}
-}
+} 
 
 void AffectMap(Tile Map[WORLDSIZE][WORLDSIZE], AffectedTile** tiles){
 	AffectedTile* tile = *tiles;
@@ -72,6 +72,9 @@ void CalculateRangeEarth(Tile Map[WORLDSIZE][WORLDSIZE], AffectedTile** tiles, i
 }
 
 void DeleteTile(AffectedTile** tiles, int x, int y){
+	if(*tiles == NULL)
+		return;
+	
 	if((*tiles)->x == x && (*tiles)->y == y){
 		AffectedTile* temp = *tiles;
 		*tiles = (*tiles)->Next;

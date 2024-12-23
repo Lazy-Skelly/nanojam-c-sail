@@ -16,8 +16,6 @@
 #define FACTORYINFLUENCE 5
 #define EARTHQUAKE 3 
 
-#define WORLDSIZE 64
-
 typedef struct Tile{
 	int Type; //grass, factor, road, fertilized, grass .....
 	

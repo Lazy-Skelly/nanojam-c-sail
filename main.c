@@ -1,5 +1,7 @@
 #include "Utils.h"
 #include "Tiles.h"
+#include "Camera.h"
+#include "Renderer.h"
 #include <stdio.h>
 
 #define WIDTH 800
@@ -7,8 +9,14 @@
 
 Tile Map[64][64];
 
+
+/* TODO (#1#): continue animation you got the idea wxith the 
+               struct go for it */
+
+
+
 int main(void){
-    InitWindow(WIDTH,HEIGHT,"RayLibussy");
+    InitWindow(WIDTH,HEIGHT,"Kirby");
     SetTargetFPS(60);
 	
 	ReinitializeMap(Map);
@@ -33,10 +41,10 @@ int main(void){
 	Map[10][22].Type = FACTORY;
 
 	Map[30][22].Type = RUIN;
-	Map[30][22].Type = RUIN;
+	Map[30][23].Type = RUIN;
 	
 	Map[20][22].Type = WATER;
-	Map[20][23].Type = WATER;
+	Map[20][23].Type = WATER; 
 	Map[20][24].Type = WATER;
 	Map[20][25].Type = WATER;
 	Map[20][26].Type = WATER;
@@ -59,17 +67,48 @@ int main(void){
 	y=20;
 	int type = FERTELIZED;
 	
+	Texture2D texture = LoadTexture("sprites/spritesheet.png");
+	Rectangle source= {0,0,32,32};
+	
+	Camera2D camera ;
+	camera.offset = (Vector2){0,0}; 
+	camera.target = (Vector2){0,0};
+	camera.zoom = 1;
+	camera.rotation = 0; 
+	
     while (!WindowShouldClose()) {
+		//CameraMoveBorder(&camera,800,400);
+		if(IsMouseButtonDown(MOUSE_RIGHT_BUTTON)){
+			Vector2 stuff = PickPoint(camera);
+			printf("%f:%f\n",stuff.x,stuff.y);
+			CalculateRange(Map,&tiles,stuff.x,stuff.y,6,type);
+			FactoryRanges(Map,&tiles);	
+			//LimitRange(Map,&tiles,BARREN);
+		}
+		if(IsMouseButtonDown(MOUSE_LEFT_BUTTON))
+			CameraMove(&camera);
+			
         BeginDrawing();
+        BeginMode2D(camera);
         ClearBackground(RAYWHITE);
+        
+       // DrawTexture(texture,0,0,WHITE);
+       	for(int i = 0; i<25;i++){
+    		for(int j = 0;j<25;j++){
+				DrawTexturePro(texture,source,(Rectangle){400-(i*16)+(j*16),0+j*8+(i*8),32,32},(Vector2){0,0},0,WHITE);
+			}
+		}
+		
+		
+		
 		if(IsKeyPressed(KEY_DOWN))
 			y++;
 		if(IsKeyPressed(KEY_UP))
 			y--;
 		if(IsKeyPressed(KEY_LEFT))
-			x--;
+			x++;
 		if(IsKeyPressed(KEY_RIGHT))
-			x++;	
+			x--;	
 					
 		if(IsKeyPressed(KEY_C)){
 			type = GRASS;
@@ -91,6 +130,7 @@ int main(void){
 //			EarthQuake(Map,&earth,45,21);
 			AffectMap(Map,&ruin);
 		}	
+		
 			
 		if(type == GRASS){
 			CalculateRange(Map,&tiles,x,y,3,type);
@@ -112,6 +152,7 @@ int main(void){
 			free(factory);
 			factory = temp;
 		}*/
+		Draw(Map,texture);
 		while(tiles){
 			DrawRectangle(tiles->x*5+20,tiles->y*5+20,5,5,BLUE);
 //			temp = temp->Next;
@@ -119,7 +160,7 @@ int main(void){
 			free(tiles);
 			tiles = temp;
 		}
-		DrawMap(Map);
+		//DrawMap(Map);
     	EndDrawing();
 	}
 	
