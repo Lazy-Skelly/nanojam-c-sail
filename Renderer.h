@@ -44,7 +44,7 @@ typedef struct Building{
 void Draw(Tile Map[WORLDSIZE][WORLDSIZE], Texture2D texture, Animated** list, AffectedTile** highlight, Building** builds);
 void AddAnimated(Animated** list, int x, int y, int type, int frame);
 void Addframe(Tile Map[WORLDSIZE][WORLDSIZE],Animated** list, AffectedTile** tiles, bool world);
-void DrawSingle(Tile Map[WORLDSIZE][WORLDSIZE],Building** builds,int x, int y);
+void DrawSingle(Tile Map[WORLDSIZE][WORLDSIZE],Building** builds,int x, int y, Color color);
 void DrawBuilding(Tile Map[WORLDSIZE][WORLDSIZE], Building** builds);
 void AddBuilding(Building** builds,int type,int x, int y, int frame, int size, Texture2D texture);
 void RemoveBuild(Building** list, int x, int y);

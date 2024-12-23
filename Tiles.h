@@ -28,7 +28,7 @@ typedef struct AffectedTile{
 }AffectedTile;
 
 void ReinitializeMap(Tile Map[WORLDSIZE][WORLDSIZE]);
-void AffectMap(Tile Map[WORLDSIZE][WORLDSIZE], AffectedTile** tiles);
+int AffectMap(Tile Map[WORLDSIZE][WORLDSIZE], AffectedTile** tiles);
 void AddTile(AffectedTile** tiles ,int x, int y, int type);
 bool SearchList(AffectedTile** tiles,int x, int y);
 void CalculateRange(Tile Map[WORLDSIZE][WORLDSIZE], AffectedTile** tiles, int x, int y, int Power, int type);

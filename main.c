@@ -2,6 +2,7 @@
 #include "Tiles.h"
 #include "Camera.h"
 #include "Renderer.h"
+#include "UI.h"
 #include <stdio.h>
 
 #define WIDTH 800
@@ -23,57 +24,21 @@ int main(void){
 	
 	ReinitializeMap(Map);
 	AffectedTile* tiles = NULL;
-//	DeleteTile(&tiles,1,0);
-//	AffectMap(Map,&tiles);
-	
-/*	while(tiles){
-		printf("%d ",tiles->x);
-		AffectedTile* temp = tiles->Next;
-		free(tiles);
-		tiles = temp;
-	}*/
-/*	Map[46][20].Type = FACTORY;
-	Map[45][21].Type = FACTORY;
-	Map[46][21].Type = FACTORY;
-	Map[45][20].Type = FACTORY;
-
-	Map[10][20].Type = FACTORY;
-	Map[10][21].Type = FACTORY;
-	Map[10][22].Type = FACTORY;
-	Map[10][22].Type = FACTORY;
-
-	Map[30][22].Type = RUIN;
-	Map[30][23].Type = RUIN;
-	
-	Map[25][22].Type = CONWATER;
-	
-	Map[20][22].Type = BADWATER;
-	Map[20][23].Type = BADWATER; 
-	Map[20][24].Type = BADWATER;
-	Map[20][25].Type = BADWATER;
-	Map[20][26].Type = BADWATER;
-	Map[21][26].Type = BADWATER;
-	Map[20][27].Type = BADWATER;
-	Map[21][27].Type = BADWATER;
-	Map[20][28].Type = BADWATER;
-	Map[21][28].Type = BADWATER;
-	Map[20][29].Type = BADWATER;
-	Map[21][29].Type = BADWATER;
-	Map[21][30].Type = BADWATER;
-	Map[21][31].Type = BADWATER;
-	Map[21][32].Type = BADWATER;
-	Map[21][33].Type = BADWATER;
-	Map[21][34].Type = BADWATER;	*/
 	
 	printf("halo");
 	int x,y;
 	x=50;
 	y=20;
-	int type = FERTELIZED;
-	
 	Animated* animations = NULL;
 	
 	Texture2D texture = LoadTexture("sprites/spritesheet.png");
+	Texture2D power[5];
+	power[0] = LoadTexture("sprites/rain.png");
+	power[1] = LoadTexture("sprites/seed.png");
+	power[2] = LoadTexture("sprites/forest.png");
+	power[3] = LoadTexture("sprites/jungle.png");
+	power[4] = LoadTexture("sprites/earth.png");
+	
 	Rectangle source= {0,0,32,32};
 	Image image = LoadImage("sprites/map.png");
 	Color* color = LoadImageColors(image);
@@ -122,14 +87,17 @@ int main(void){
 	camera.rotation = 0; 
 	
 	int counter = 0;
+	int money = 300;
+	int selected = 0;
+	int cost =0;
 	
     while (!WindowShouldClose()) {
 		//CameraMoveBorder(&camera,800,400);
 	//	if(IsMouseButtonDown(MOUSE_RIGHT_BUTTON)){
-			Vector2 stuff = PickPoint(camera);
+/*			Vector2 stuff = PickPoint(camera);
 			//printf("%f:%f\n",stuff.x,stuff.y);
 			CalculateRange(Map,&tiles,stuff.x,stuff.y,6,type);
-			FactoryRanges(Map,&tiles);	
+			FactoryRanges(Map,&tiles);	*/
 			//LimitRange(Map,&tiles,BARREN);
 	//		}
 		if(IsMouseButtonDown(MOUSE_LEFT_BUTTON))
@@ -138,54 +106,73 @@ int main(void){
         BeginDrawing();
         BeginMode2D(camera);
         ClearBackground(RAYWHITE);
-        
-       // DrawTexture(texture,0,0,WHITE);
-       	/*for(int i = 0; i<25;i++){
-    		for(int j = 0;j<25;j++){
-				DrawTexturePro(texture,source,(Rectangle){400-(i*16)+(j*16),0+j*8+(i*8),32,32},(Vector2){0,0},0,WHITE);
-			}
-		}*/
-		
-		
-		
-		if(IsKeyPressed(KEY_DOWN))
-			y++;
-		if(IsKeyPressed(KEY_UP))
-			y--;
-		if(IsKeyPressed(KEY_LEFT))
-			x++;
-		if(IsKeyPressed(KEY_RIGHT))
-			x--;	
-		
-		AffectedTile* watercheck = NULL;
-		
-		if(IsKeyPressed(KEY_E)){
-			Map[25][22].Type = RUIN;
+        Vector2 stuff = PickPoint(camera);
+        switch(selected){
+        	case 0:
+				CalculateRange(Map,&tiles,stuff.x,stuff.y,6,FERTELIZED);
+				FactoryRanges(Map,&tiles);
+        		LimitRange(Map,&tiles,BARREN);
+        		cost = 25;
+        		break;
+        	case 1:
+        		CalculateRange(Map,&tiles,stuff.x,stuff.y,5,GRASS);
+        		LimitRange(Map,&tiles,FERTELIZED);
+        		cost = 100;
+				break;
+			case 2:
+				CalculateRange(Map,&tiles,stuff.x,stuff.y,4,FOREST);
+				LimitRange(Map,&tiles,GRASS);
+				cost = 200;
+				break;
+			case 3:
+				CalculateRange(Map,&tiles,stuff.x,stuff.y,4,JUNGLE);
+				LimitRange(Map,&tiles,GRASS);
+				cost = 200;
+				break;
+			case 4:
+				int x =PickPoint(camera).x;
+				int y =PickPoint(camera).y;
+				if(!(Map[x][y].Type != FACTORY && Map[x][y].Type != CITY && Map[x][y].Type != CONWATER)){
+				cost = 400;
+				
+				EarthQuake(Map,&tiles,PickPoint(camera).x,PickPoint(camera).y);
+//				EarthQuake(Map,&earth,45,21);
+				/*	Addframe(Map,&animations,&earth,false);
+					AffectMap(Map,&earth);*/
+				}
+				break;
+			default:
+							
 		}
-		
-		if(counter < 90 ){	
+ 	
+		AffectedTile* watercheck = NULL;		
+		if(counter < 40 ){	
 			if(WaterCheck(Map,&watercheck)){
 				Addframe(Map,&animations,&watercheck,true);
-				AffectMap(Map,&watercheck);
-				type = GRASS;
+				money += AffectMap(Map,&watercheck);
 				counter++;				
 			}	
 			
-			if(counter ==90){
+			if(counter ==40){
 				AffectedTile* water = NULL;
 				WaterInfluence(Map, &water);
 				Addframe(Map,&animations,&water,true);
-				AffectMap(Map,&water);
+				money += AffectMap(Map,&water);
 			}
 		} 
 		
-		if(IsKeyPressed(KEY_B)){
-			type = FOREST;
+		if(IsKeyPressed(KEY_ONE)){
+			selected =0;
+		}else if(IsKeyPressed(KEY_TWO)){
+			selected = 1;
+		}else if(IsKeyPressed(KEY_THREE)){
+			selected = 2;
+		}else if(IsKeyPressed(KEY_FOUR)){
+			selected = 3;
+		}else if(IsKeyPressed(KEY_FIVE)){
+			selected = 4;
 		}
 		
-		if(IsKeyPressed(KEY_N)){
-			type = JUNGLE;
-		}
 		
 		if(IsKeyPressed(KEY_X)){
 			AffectedTile* earth = NULL;
@@ -203,25 +190,28 @@ int main(void){
 		
 		if(IsKeyPressed(KEY_V)){
 			AffectedTile* ruin = NULL;
-			CheckRuins(Map,&ruin);
 //			EarthQuake(Map,&earth,45,21);
+			CheckRuins(Map,&ruin);
 			Addframe(Map,&animations,&ruin,false);
 			AffectMap(Map,&ruin);
 		}	
 		
 			
-		if(type == GRASS){
+/*		if(type == GRASS){
 			CalculateRange(Map,&tiles,x,y,3,type);
 			LimitRange(Map,&tiles,FERTELIZED);
 		}else{
 			CalculateRange(Map,&tiles,x,y,6,type);
 			FactoryRanges(Map,&tiles);	
 			LimitRange(Map,&tiles,BARREN);
-		}
+		}*/
 //		AffectedTile* temp = tiles;	
 		if(IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)){
-			Addframe(Map,&animations,&tiles,false);
-			AffectMap(Map,&tiles);
+			if(money>=cost){
+				Addframe(Map,&animations,&tiles,false);
+				money += AffectMap(Map,&tiles);
+				money -= cost;
+			}
 		}
 		
 //		AffectedTile* factory;
@@ -245,7 +235,20 @@ int main(void){
 		}
 		//DrawMap(Map);
 		EndMode2D();
-		DrawRectangle(0,0,10,10,RED);
+	/*	DrawRectangle(0,0,50,50,BROWN);
+		DrawText(TextFormat("%d",power),20,0,30,YELLOW);*/
+		
+	/*	if(Button(TextFormat("%d",money),0,0,50,50,50))
+			printf("you idiot");*/
+		DrawText(TextFormat("%d",money),50,0,25,BLACK);
+		ButtonTexture(0,0,50,50,power[selected]);
+		for(int i =0;i<5;i++){
+			if(ButtonTexture(300+i*50,350,40,40,power[i]))
+				selected = i;
+			DrawText(TextFormat("%d",i+1),303+i*50,353,15,BLACK);	
+		}
+		/*if(ButtonTexture(0,0,50,50,texture));
+			printf("you idiot");*/	
     	EndDrawing();
 	}
 	

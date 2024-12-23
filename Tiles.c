@@ -8,16 +8,29 @@ void ReinitializeMap(Tile Map[WORLDSIZE][WORLDSIZE]){
 	}
 } 
 
-void AffectMap(Tile Map[WORLDSIZE][WORLDSIZE], AffectedTile** tiles){
+int AffectMap(Tile Map[WORLDSIZE][WORLDSIZE], AffectedTile** tiles){
 	AffectedTile* tile = *tiles;
+	int money = 0;
 	while(tile){
 		Map[tile->x][tile->y].Type = tile->Type;
+		if(tile->Type == GRASS){
+			money +=5;
+		}else if(tile->Type == GRASS){
+			money +=5;
+		}else if(tile->Type == FOREST){
+			money +=15;
+		}else if(tile->Type == JUNGLE){
+			money +=15;
+		}else if(tile->Type == WATER){
+			money +=1;
+		}
 		
 		AffectedTile* temp = tile->Next;
 		free(tile);
 		tile = temp;
 	}
 	*tiles=NULL;
+	return money;
 }
 
 void AddTile(AffectedTile** tiles ,int x, int y, int type){
@@ -142,6 +155,21 @@ void LimitRange2(Tile Map[WORLDSIZE][WORLDSIZE], AffectedTile** tiles, int type,
 	}
 }
 
+void LimitRange3(Tile Map[WORLDSIZE][WORLDSIZE], AffectedTile** tiles, int type, int type2, int type3){
+	AffectedTile* temp = *tiles;
+	while(temp){
+		if(Map[temp->x][temp->y].Type == type || Map[temp->x][temp->y].Type == type2 || Map[temp->x][temp->y].Type == type3){
+			temp = temp->Next;	
+		}else{
+			int x, y;
+			x = temp->x;
+			y = temp->y;
+			temp = temp->Next;
+			DeleteTile(tiles,x,y);
+		}
+	}
+}
+
 bool WaterCheck(Tile Map[WORLDSIZE][WORLDSIZE],AffectedTile** tiles){
 	for(int i=0;i<WORLDSIZE;i++){
 		for(int j=0;j<WORLDSIZE;j++){
@@ -174,7 +202,7 @@ void WaterInfluence(Tile Map[WORLDSIZE][WORLDSIZE],AffectedTile** tiles){
 
 void EarthQuake(Tile Map[WORLDSIZE][WORLDSIZE], AffectedTile** tiles, int x, int y){
 	CalculateRangeEarth(Map,tiles,x,y,EARTHQUAKE,RUIN);
- 	LimitRange2(Map,tiles,FACTORY,CONWATER);
+ 	LimitRange3(Map,tiles,FACTORY,CONWATER,CITY);
 }
 
 bool bigcheck(Tile Map[WORLDSIZE][WORLDSIZE], int x, int y){

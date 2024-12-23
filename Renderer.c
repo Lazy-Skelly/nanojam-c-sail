@@ -10,7 +10,7 @@ Rectangle CITYTEXTURE = {3*32,6*32,32,32};
 Rectangle FACTORYTEXTURE = {3*32,6*32,32,32};
 Rectangle CONWATERTEXTURE = {3*32,6*32,32,32};
 Rectangle WATERTEXTURE = {0*32,10*32,32,32};
-Rectangle RUINTEXTURE = {5*32,6*32,32,32};
+Rectangle RUINTEXTURE = {9*32,5*32,32,32};
 Rectangle BADWATERTEXTURE = {0,8*32,32,32};
 Rectangle ECORUINTEXTURE = {6*32,5*32,32,32};
 
@@ -90,7 +90,7 @@ void Draw(Tile Map[WORLDSIZE][WORLDSIZE], Texture2D texture, Animated** list, Af
 					DrawTexturePro(texture,CONWATERTEXTURE,(Rectangle){400-(i*16)+(j*16),0+j*8+(i*8),32,32},(Vector2){0,0},0,color);
 				}
 			}
-			DrawSingle(Map,builds,i,j);
+			DrawSingle(Map,builds,i,j,color);
 		}
 	}
 }
@@ -139,7 +139,7 @@ void Addframe(Tile Map[WORLDSIZE][WORLDSIZE],Animated** list, AffectedTile** til
 	}
 }
 
-void DrawSingle(Tile Map[WORLDSIZE][WORLDSIZE],Building** builds,int x, int y){
+void DrawSingle(Tile Map[WORLDSIZE][WORLDSIZE],Building** builds,int x, int y, Color color){
 	if(*builds){
 		Building* temp = *builds;
 		while(temp){
@@ -164,19 +164,19 @@ void DrawSingle(Tile Map[WORLDSIZE][WORLDSIZE],Building** builds,int x, int y){
 				if(temp->type == CONWATER){
 					Rectangle source = {texture.width/temp->size * temp->frame,0,texture.width/temp->size,texture.height};
 					Rectangle destination = {400-(temp->x*16)+(temp->y*16),0+temp->y*8+(temp->x*8)-8,32,32};
-					DrawTexturePro(texture,source,destination,(Vector2){0,0},0,WHITE);
+					DrawTexturePro(texture,source,destination,(Vector2){0,0},0,color);
 					temp->frame++;
 					temp->frame = temp->frame%temp->size;
 				}else if(temp->type == FACTORY){
 					Rectangle source = {texture.width/temp->size * temp->frame,0,texture.width/temp->size,texture.height};
 					Rectangle destination = {400-(temp->x*16)+(temp->y*16)-8,0+temp->y*8+(temp->x*8)-6,48,48};
-					DrawTexturePro(texture,source,destination,(Vector2){0,0},0,WHITE);
+					DrawTexturePro(texture,source,destination,(Vector2){0,0},0,color);
 					temp->frame++;
 					temp->frame = temp->frame%temp->size;
 				}else{
 					Rectangle source = (Rectangle){texture.width/4 * temp->size,0,32,32};
 					Rectangle destination = {400-(temp->x*16)+(temp->y*16),0+temp->y*8+(temp->x*8)-8,32,32};
-					DrawTexturePro(texture,source,destination,(Vector2){0,0},0,WHITE);
+					DrawTexturePro(texture,source,destination,(Vector2){0,0},0,color);
 				}
 			}
 				return;
