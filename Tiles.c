@@ -127,12 +127,46 @@ void LimitRange(Tile Map[WORLDSIZE][WORLDSIZE], AffectedTile** tiles, int type){
 	}
 }
 
+void LimitRange2(Tile Map[WORLDSIZE][WORLDSIZE], AffectedTile** tiles, int type, int type2){
+	AffectedTile* temp = *tiles;
+	while(temp){
+		if(Map[temp->x][temp->y].Type == type || Map[temp->x][temp->y].Type == type2){
+			temp = temp->Next;	
+		}else{
+			int x, y;
+			x = temp->x;
+			y = temp->y;
+			temp = temp->Next;
+			DeleteTile(tiles,x,y);
+		}
+	}
+}
+
+bool WaterCheck(Tile Map[WORLDSIZE][WORLDSIZE],AffectedTile** tiles){
+	for(int i=0;i<WORLDSIZE;i++){
+		for(int j=0;j<WORLDSIZE;j++){
+			if(Map[i][j].Type == CONWATER){
+				return false;
+			}
+		}
+	}
+	for(int i=0;i<WORLDSIZE;i++){
+		for(int j=0;j<WORLDSIZE;j++){
+			if(Map[i][j].Type == BADWATER){
+				AddTile(tiles,i,j,WATER);
+			}
+		}
+	}
+	return true;
+}
+
 void WaterInfluence(Tile Map[WORLDSIZE][WORLDSIZE],AffectedTile** tiles){
+	
 	for(int i=0;i<WORLDSIZE;i++){
 		for(int j=0;j<WORLDSIZE;j++){
 			if(Map[i][j].Type == WATER){
-				CalculateRange(Map,tiles,i,j,2,GRASS);
-				LimitRange(Map,tiles,BARREN);
+				CalculateRange(Map,tiles,i,j,3,GRASS);
+				LimitRange2(Map,tiles,BARREN,FERTELIZED);
 			}
 		}
 	}
@@ -140,7 +174,7 @@ void WaterInfluence(Tile Map[WORLDSIZE][WORLDSIZE],AffectedTile** tiles){
 
 void EarthQuake(Tile Map[WORLDSIZE][WORLDSIZE], AffectedTile** tiles, int x, int y){
 	CalculateRangeEarth(Map,tiles,x,y,EARTHQUAKE,RUIN);
-	LimitRange(Map,tiles,FACTORY);
+ 	LimitRange2(Map,tiles,FACTORY,CONWATER);
 }
 
 bool bigcheck(Tile Map[WORLDSIZE][WORLDSIZE], int x, int y){
