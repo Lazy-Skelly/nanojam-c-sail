@@ -18,11 +18,11 @@ int AffectMap(Tile Map[WORLDSIZE][WORLDSIZE], AffectedTile** tiles){
 		}else if(tile->Type == GRASS){
 			money +=5;
 		}else if(tile->Type == FOREST){
-			money +=15;
+			money +=20;
 		}else if(tile->Type == JUNGLE){
-			money +=15;
+			money +=20;
 		}else if(tile->Type == WATER){
-			money +=1;
+			money +=5;
 		}
 		
 		AffectedTile* temp = tile->Next;
