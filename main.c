@@ -51,6 +51,7 @@ int main(void){
 	Animated* animations = NULL;
 	
 	Sound ost = LoadSound("sprites/Light on a Window.mp3");
+	Sound over = LoadSound("sprites/Game Over.mp3");
 	Sound sounds[5] ;
 	Sound water = LoadSoundFromWave(LoadWave("sprites/water.wav"));
 	sounds[0] = LoadSoundFromWave(LoadWave("sprites/magic.wav"));
@@ -62,6 +63,7 @@ int main(void){
 	Texture2D texture = LoadTexture("sprites/spritesheet.png");
 	Texture2D menu = LoadTexture("sprites/DEFOREST.png");
 	Texture2D mommy = LoadTexture("sprites/dommymommy.png");
+	Texture2D dommy = LoadTexture("sprites/Dommymommydissapointedinyou.png");
 	Texture2D power[5];
 	power[0] = LoadTexture("sprites/rain.png");
 	power[1] = LoadTexture("sprites/seed.png");
@@ -126,22 +128,31 @@ int main(void){
 	int selected = 0;
 	int cost =0;
 	int strength =0;
-	int talk = 0;
+	int talk = 26;
 	int talkcounter = 0;
+	int choice = 1;
+	int overcounter =0;
 	bool Do = false;
 	SetMasterVolume(0.25);
+	SetExitKey(KEY_NULL);
 	
     while (!WindowShouldClose()) {
-    	if(!IsSoundPlaying(ost)){
+    	if(!IsSoundPlaying(ost) && talk != 28){
+    		StopSound(over);
     		PlaySound(ost);
+		}else if (talk == 28){
+			StopSound(ost);
+			if(!IsSoundPlaying(over))
+				PlaySound(over);
 		}
 		
-		if(IsMouseButtonDown(MOUSE_LEFT_BUTTON))
+		if(IsMouseButtonDown(MOUSE_LEFT_BUTTON) && talk == 27)
 			CameraMove(&camera);
+		FixCamera(&camera);	
 			
         BeginDrawing();
         BeginMode2D(camera);
-        ClearBackground(RAYWHITE);
+        ClearBackground(DARKGRAY);
         Vector2 stuff ;
         switch(talk){
         	case 4:
@@ -241,7 +252,7 @@ int main(void){
 		
  		if(talk == 26){
  			Do = false;
- 			Image image = LoadImage("sprites/map.png");
+ 			Image image = LoadImage(TextFormat("sprites/map%d.png",choice));
 			Color* color = LoadImageColors(image);	
 		//	Building* builds = NULL;
 			while(builds){
@@ -271,7 +282,7 @@ int main(void){
 			counter = 0;
 			Addframe(Map,&animations,&tiles,true);
 			AffectMap(Map,&tiles);
-			money = 300;
+			money = 30;
 			selected =0;
 		for(int i = 0; i< WORLDSIZE;i++){
 			for(int j =0;j < WORLDSIZE;j++){
@@ -369,6 +380,9 @@ int main(void){
 				Do=false;
 			}
 		}
+		if(money<25){
+			talk = 28;
+		}
 		
 //		AffectedTile* factory;
 /*		CalculateRange(Map,&factory,45,20,5,BARREN);
@@ -432,26 +446,52 @@ int main(void){
 		if(talk <27){
 			Tutorial(&talk,&talkcounter,mommy);
 		}
+		if(talk == 28){
+			
+			float offset = (float)overcounter/5-4;
+			if(overcounter >=25){
+				offset = 0;
+			}else if(overcounter < 25){
+				overcounter++;
+				offset = -offset *offset +1;
+			}
+			talkcounter++;
+			DrawRectangle(100,100-offset*30,600,150,BROWN);
+			DrawRectangleLinesEx((Rectangle){100,100-offset*30,600,150},3,DARKBROWN);
+			DrawRectangle(105,105-offset*30,128,128,LIME);		
+			DrawTexture(dommy,105,105-offset*30,WHITE);
+			DrawRectangleLinesEx((Rectangle){105,105-offset*30,128,128},3,DARKGREEN);
+			DrawText(" Would you look at that ! it appears ",240,110-offset*30,19,BLACK);
+			DrawText("YOU LOST",240+MeasureText(" Would you look at that ! it appears ",19),110-offset*30,19,RED);
+			DrawText(" Say goodbye to the sun, your job is done. . . ",240,130-offset*30,19,BLACK);
+			DrawText(" and so are you <3 ",240,150-offset*30,19,RED);
+			if(Button("Restart",330,190-offset*30,100,40,19)){
+				talk = 26;
+			}
+			if(Button("Menu",470,190-offset*30,100,40,19)){
+				
+			}
+		}
 		if(talk == 4 || talk == 5){
-			ButtonDance(300,350,40,40,power[0],talkcounter);
+			ButtonDance(300+50*selected,350,40,40,power[0],talkcounter);
 			if(IsKeyPressed(KEY_ENTER)&& talk == 5){
 				Do = true;
 			}
 		}else if(talk == 6 || talk == 7){
 			selected = 1;
-			ButtonDance(300,350,40,40,power[1],talkcounter);
+			ButtonDance(300+50*selected,350,40,40,power[1],talkcounter);
 			if(IsKeyPressed(KEY_ENTER)&& talk == 7){
 				Do = true;
 			}
 		}else if(talk == 8 || talk == 9){
 			selected = 2;
-			ButtonDance(300,350,40,40,power[2],talkcounter);
+			ButtonDance(300+50*selected,350,40,40,power[2],talkcounter);
 			if(IsKeyPressed(KEY_ENTER)&& talk == 9){
 				Do = true;
 			}
 		}else if(talk == 10 || talk == 11){
 			selected = 3;
-			ButtonDance(300,350,40,40,power[3],talkcounter);
+			ButtonDance(300+50*selected,350,40,40,power[3],talkcounter);
 			if(IsKeyPressed(KEY_ENTER)&& talk == 11){
 				Do = true;
 			}
@@ -462,7 +502,7 @@ int main(void){
 		}else if(talk == 13 || talk == 14){
 			camera.target = (Vector2){348,77};
 			selected = 4;
-			ButtonDance(300,350,40,40,power[4],talkcounter);
+			ButtonDance(300+50*selected,350,40,40,power[4],talkcounter);
 			if(IsKeyPressed(KEY_ENTER)&& talk == 14){
 				Do = true;
 			}
@@ -473,13 +513,13 @@ int main(void){
 		}else if(talk == 16 || talk == 17 || talk == 20|| talk == 21){
 			camera.target = (Vector2){41,-104};
 			selected = 0;
-			ButtonDance(300,350,40,40,power[0],talkcounter);
+			ButtonDance(300+50*selected,350,40,40,power[0],talkcounter);
 			if(IsKeyPressed(KEY_ENTER)&& (talk == 17|| talk == 21)){
 				Do = true;
 			}
 		}else if(talk == 18 || talk == 19){
 			selected = 4;
-			ButtonDance(300,350,40,40,power[4],talkcounter);
+			ButtonDance(300+50*selected,350,40,40,power[4],talkcounter);
 			if(IsKeyPressed(KEY_ENTER)&& talk == 19 ){
 				Do = true;
 			}
@@ -490,7 +530,7 @@ int main(void){
 		}else if(talk == 23 || talk == 24){
 			camera.target = (Vector2){27,410};
 			selected = 4;
-			ButtonDance(300,350,40,40,power[4],talkcounter);
+			ButtonDance(300+50*selected,350,40,40,power[4],talkcounter);
 			if(IsKeyPressed(KEY_ENTER)&& talk == 24 ){
 				Do = true;
 			}

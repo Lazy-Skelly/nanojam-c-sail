@@ -1,10 +1,25 @@
 #include "Camera.h"
 
 void CameraMove(Camera2D * Camera) {
+	
 
     Vector2 delta = GetMouseDelta();
     delta = Vector2Scale(delta, -1.0f/Camera->zoom);
     Camera->target = Vector2Add(Camera->target, delta);
+    
+}
+
+void FixCamera(Camera2D * Camera){
+	if(Camera->target.x > 1000){
+    	Camera->target.x -= (Camera->target.x-1000)/50;
+	}else if(Camera->target.x < -1000){
+		Camera->target.x -= (Camera->target.x+1000)/50;
+	}
+	if(Camera->target.y > 850){
+    	Camera->target.y -= (Camera->target.y-850)/50;
+	}else if(Camera->target.y < -200){
+		Camera->target.y -= (Camera->target.y+200)/50;
+	}
 }
 
 void CameraMoveBorder(Camera2D * Camera,int height,int width) {

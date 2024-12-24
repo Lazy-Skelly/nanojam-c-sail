@@ -1,12 +1,12 @@
 #include "UI.h"
 
 bool Button(const char* text, int x, int y, int width, int height, int font){
-	DrawRectangle(x,y,width,height,(Color){128,239,128,255});
-	DrawRectangleLinesEx((Rectangle){x,y,width,height},3,GREEN);
+	DrawRectangle(x,y,width,height,SKYBLUE);
+	DrawRectangleLinesEx((Rectangle){x,y,width,height},3,BLUE);
 	int size = MeasureText(text,font);
 	int offsetx = (width - size)/2;
-	int offsety = (height - font)+3;
-	DrawText(text,x+offsetx,y+offsety,font,SKYBLUE);
+//	int offsety = (height - font)+3;
+	DrawText(text,x+offsetx,y+10,font,BLACK);
 	
 	if(IsMouseButtonReleased(MOUSE_LEFT_BUTTON))
 		return CheckCollisionPointRec(GetMousePosition(),(Rectangle){x,y,width,height});
