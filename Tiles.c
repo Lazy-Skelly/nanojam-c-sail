@@ -227,6 +227,18 @@ void CheckRuins(Tile Map[WORLDSIZE][WORLDSIZE], AffectedTile** ruin){
 		free(temp);
 	}
 }
+float Percentage(Tile Map[WORLDSIZE][WORLDSIZE]){
+	float smth = 0;
+	for(int i = 0; i< WORLDSIZE;i++){
+		for(int j=0;j<WORLDSIZE;j++){
+			if(bigcheck(Map,i,j)){
+				smth++;
+			}
+		}
+	}
+	return smth/(WORLDSIZE*WORLDSIZE);
+}
+
 //testing 
 
 void DrawMap(Tile Map[WORLDSIZE][WORLDSIZE]){

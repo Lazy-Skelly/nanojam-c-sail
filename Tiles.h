@@ -14,7 +14,7 @@
 #define ECORUIN 11
 
 #define FACTORYINFLUENCE 5
-#define EARTHQUAKE 5 
+#define EARTHQUAKE 6 
 
 typedef struct Tile{
 	int Type; //grass, factor, road, fertilized, grass .....
@@ -39,5 +39,6 @@ void WaterInfluence(Tile Map[WORLDSIZE][WORLDSIZE],AffectedTile** tiles);
 void EarthQuake(Tile Map[WORLDSIZE][WORLDSIZE], AffectedTile** tiles, int x, int y);
 void CheckRuins(Tile Map[WORLDSIZE][WORLDSIZE], AffectedTile** ruin);
 bool WaterCheck(Tile Map[WORLDSIZE][WORLDSIZE],AffectedTile** tiles);
+float Percentage(Tile Map[WORLDSIZE][WORLDSIZE]);
 //just testing 
 void DrawMap(Tile Map[WORLDSIZE][WORLDSIZE]);

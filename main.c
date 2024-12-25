@@ -20,14 +20,15 @@ bool ColorIsEqual(Color col, Color col2){
 }
 
 int main(void){
-    InitWindow(WIDTH,HEIGHT,"Kirby");
+	SetTraceLogLevel(LOG_NONE);
+    InitWindow(WIDTH,HEIGHT,"DEFOREST");
     InitAudioDevice();   
     SetTargetFPS(60);
 	
 	ReinitializeMap(Map);
 	AffectedTile* tiles = NULL;
 	
-	printf("halo");
+//	printf("halo");
 	int x,y;
 	x=50;
 	y=20;
@@ -39,6 +40,7 @@ int main(void){
 	Sound seagulls = LoadSound("sprites/Seagulls.mp3");
 	Sound piano = LoadSound("sprites/Serenity.mp3");
 	Sound sounds[5] ;
+	Sound nah = LoadSoundFromWave(LoadWave("sprites/synth.wav"));
 	Sound water = LoadSoundFromWave(LoadWave("sprites/water.wav"));
 	sounds[0] = LoadSoundFromWave(LoadWave("sprites/magic.wav"));
 	sounds[1] = LoadSoundFromWave(LoadWave("sprites/grass.wav"));
@@ -47,6 +49,7 @@ int main(void){
 	sounds[4] = LoadSoundFromWave(LoadWave("sprites/crash.wav"));
 	
 	Texture2D texture = LoadTexture("sprites/spritesheet.png");
+	Texture2D progress = LoadTexture("sprites/Progress.png");
 	Texture2D menu = LoadTexture("sprites/DEFOREST.png");
 	Texture2D mommy = LoadTexture("sprites/dommymommy.png");
 	Texture2D dommy = LoadTexture("sprites/Dommymommydissapointedinyou.png");
@@ -68,11 +71,10 @@ int main(void){
 	Rectangle source= {0,0,32,32};
 	Image image = LoadImage("sprites/maptutorialp.png");
 	Color* color = LoadImageColors(image);
-/*	printf("%d,%d,%d\n",color[0].r,color[0].g,color[0].b);
-	printf("%d,%d,%d\n",color[1].r,color[1].g,color[1].b);
-	printf("%d,%d,%d\n",color[2].r,color[2].g,color[2].b);
-	printf("%d,%d,%d\n",color[3].r,color[3].g,color[3].b);
-	printf("%d,%d,%d\n",color[4].r,color[4].g,color[4].b);*/
+	
+	Shader shader = LoadShader(0,"sprites/shader.fs");
+	int PercentageUniform = GetShaderLocation(shader,"percentage");
+
 	Building* builds = NULL;
 	for(int i = 0; i< WORLDSIZE;i++){
 		for(int j =0;j < WORLDSIZE;j++){
@@ -123,19 +125,22 @@ int main(void){
 	int overcounter =0;
 	bool Do = false;
 	int around = -50;
-	SetMasterVolume(0.25);
+	SetMasterVolume(0.4);
 	SetExitKey(KEY_NULL);
 	int menucounter = -1;
+	bool NoWin = false;
     while (!WindowShouldClose()) {
-    	//StartMenuBefore(title,400,800,&menucounter);
     	if(choice == -2){
     		choice = LogoScreen(logo,sea,seagulls);
     		continue;
     	}else if(choice == -1){
     		if(!IsSoundPlaying(piano))
-    			PlaySound(piano);	
+    			PlaySound(piano);
+			if(IsSoundPlaying(ost))
+				StopSound(ost);		
 			
 			choice  = StartMenuBefore(title,400,800,&menucounter);
+			around = -50;
 			continue;
 		}
 		if(IsSoundPlaying(piano))
@@ -152,7 +157,12 @@ int main(void){
 		if(IsMouseButtonDown(MOUSE_LEFT_BUTTON) && talk == 27)
 			CameraMove(&camera);
 		FixCamera(&camera);	
-			
+		
+		float percentage = Percentage(Map);
+		if(percentage >0.01 && !NoWin && !builds){
+			talk = 29;
+		}	
+	
         BeginDrawing();
         BeginMode2D(camera);
         ClearBackground(DARKGRAY);
@@ -255,9 +265,9 @@ int main(void){
 		
  		if(talk == 26){
  			Do = false;
+ 			NoWin = false;
  			Image image = LoadImage(TextFormat("sprites/map%d.png",choice));
 			Color* color = LoadImageColors(image);	
-		//	Building* builds = NULL;
 			while(builds){
 				Building* temp = builds->next;
 				free(builds);
@@ -337,66 +347,73 @@ int main(void){
 			selected = 4;
 		}
 		
-		if(IsKeyPressed(KEY_X)){
+/*		if(IsKeyPressed(KEY_X)){
 			printf("%f,%f\n",camera.target.x,camera.target.y);
 			printf("mouse %f,%f\n",PickPoint(camera).x,PickPoint(camera).y);
-		}
-		
-	/*	if(IsKeyPressed(KEY_X)){
-			AffectedTile* earth = NULL;
-			int x =PickPoint(camera).x;
-			int y =PickPoint(camera).y;
-			if(!(Map[x][y].Type != FACTORY && Map[x][y].Type != CITY && Map[x][y].Type != CONWATER)){
-			
-				
-				EarthQuake(Map,&earth,PickPoint(camera).x,PickPoint(camera).y);
-//				EarthQuake(Map,&earth,45,21);
-				Addframe(Map,&animations,&earth,false);
-				AffectMap(Map,&earth);
-			}
-		}
-		
-		if(IsKeyPressed(KEY_V)){
-			AffectedTile* ruin = NULL;
-//			EarthQuake(Map,&earth,45,21);
-			CheckRuins(Map,&ruin);
-			Addframe(Map,&animations,&ruin,false);
-			AffectMap(Map,&ruin);
-		}	*/
-		
-			
-/*		if(type == GRASS){
-			CalculateRange(Map,&tiles,x,y,3,type);
-			LimitRange(Map,&tiles,FERTELIZED);
-		}else{
-			CalculateRange(Map,&tiles,x,y,6,type);
-			FactoryRanges(Map,&tiles);	
-			LimitRange(Map,&tiles,BARREN);
 		}*/
-//		AffectedTile* temp = tiles;	
+
 		if(IsMouseButtonPressed(MOUSE_BUTTON_RIGHT) || Do){
+			if(10>rand()%100){
+				int ran = rand()%14;
+				switch(ran){
+					case 0:
+						SetWindowTitle("Why you looking here?");
+						break;
+					case 1:
+						SetWindowTitle("Dont you have a thing to do?");
+						break;
+					case 2:
+						SetWindowTitle("Well hello there!");
+						break;
+					case 3:
+						SetWindowTitle("NEWS: gamer not focusing on game");
+						break;
+					case 4:
+						SetWindowTitle("vote for DEFOREST");
+						break;
+					case 5:
+						SetWindowTitle("DEFOREST");
+						break;
+					case 6:
+						SetWindowTitle("made by tired lich, snake & faycal");
+						break;
+					case 7:
+						SetWindowTitle("made out of pure potato and salt");
+						break;
+					case 8:
+						SetWindowTitle("big boot, big booty");
+						break;
+					case 9:
+						SetWindowTitle("the house always wins");
+						break;
+					case 10:
+						SetWindowTitle("how much your spine can take");
+						break;	
+					case 11:
+						SetWindowTitle("space 12!!! OHOHOHOHOOOO");
+						break;
+					case 12:
+						SetWindowTitle("the game is down there");
+						break;	
+					case 13:
+						SetWindowTitle("spread hate");
+						break;				
+				}
+			}
 			if(money>=cost && tiles){
 				PlaySound(sounds[selected]);
 				Addframe(Map,&animations,&tiles,false);
 				money += AffectMap(Map,&tiles);
 				money -= cost;
 				Do=false;
+			}else if(money<cost && tiles){
+				PlaySound(nah);
 			}
 		}
 		if(money<25){
 			talk = 28;
 		}
 		
-//		AffectedTile* factory;
-/*		CalculateRange(Map,&factory,45,20,5,BARREN);
-		while(factory){
-//			DrawRectangle(factory->x*5+20,factory->y*5+20,5,5,GREEN);
-			DeleteTile(&tiles,factory->x,factory->y);
-//			temp = temp->Next;
-			AffectedTile* temp = factory->Next;
-			free(factory);
-			factory = temp;
-		}*/
 		int gain = 0;
 		{
 			AffectedTile* temp = tiles;
@@ -404,7 +421,6 @@ int main(void){
 				gain++;
 				temp = temp->Next;
 			}
-		//	printf("%d\n",cost);
 			switch(selected){
 				case 0:
 					gain = 0;
@@ -429,25 +445,16 @@ int main(void){
 			}
 		}
 		Draw(Map,texture,&animations,&tiles,&builds);
-//		DrawBuilding(Map,&builds); 
 		
 		while(tiles){
-		//	DrawRectangle(tiles->x*5+20,tiles->y*5+20,5,5,BLUE);
-//			temp = temp->Next;
 			AffectedTile* temp = tiles->Next;
 			free(tiles);
 			tiles = temp;
 		}
-		//DrawMap(Map);
 		EndMode2D();
-	/*	DrawRectangle(0,0,50,50,BROWN);
-		DrawText(TextFormat("%d",power),20,0,30,YELLOW);*/
 		
-	/*	if(Button(TextFormat("%d",money),0,0,50,50,50))
-			printf("you idiot");*/
-//		talk = 3;
 		if(talk <27){
-			Tutorial(&talk,&talkcounter,mommy);
+			Tutorial(&talk,&talkcounter,mommy,dommy);
 		}
 		if(talk == 28){
 			
@@ -472,7 +479,13 @@ int main(void){
 				talk = 26;
 			}
 			if(Button("Menu",470,190-offset*30,100,40,19)){
-				
+				//around = -50;
+				choice = -1;
+				talk = 26;
+				ReinitializeMap(Map);
+				StopSound(over);
+				PlaySound(piano);
+				menucounter=-1;
 			}
 		}
 		if(talk == 4 || talk == 5){
@@ -537,36 +550,118 @@ int main(void){
 			if(IsKeyPressed(KEY_ENTER)&& talk == 24 ){
 				Do = true;
 			}
-		}else if(talk == 27){		
-			DrawRectangle(50,0,50,50,WHITE);
-			DrawText(TextFormat("%d",money),53,0,25,BLACK);
+		}else if(talk == 27){
+			if(IsKeyPressed(KEY_ESCAPE)){
+				overcounter=0;
+				talk = 30;
+			}		
+			DrawRectangle(50,0,10+MeasureText(TextFormat("%d",money),25),52,LIGHTGRAY);
+			DrawRectangleLines(50,0,10+MeasureText(TextFormat("%d",money),25),52,GOLD);
+			DrawText(TextFormat("%d",money),55,3,25,BLACK);
 			Color smth;
 			if(gain<=0){
 				smth = RED;
 			}else{
 				smth = GREEN;
 			}
-			DrawText(TextFormat("%d",gain),53,25,25,smth);
-			ButtonTexture(0,0,50,50,power[selected]);
+			BeginShaderMode(shader);
+		//	percentage = 0.6;
+			SetShaderValue(shader,PercentageUniform,&percentage,0);
+			DrawTexture(progress,600,0,WHITE);
+			EndShaderMode();
+			DrawText(TextFormat("%d",gain),53,28,25,smth);
+			ButtonTexture(0,0,52,52,power[selected]);
 				for(int i =0;i<5;i++){
-				if(ButtonTexture(300+i*50,350,40,40,power[i]))
+				if(ButtonTexture(275+i*55,350,50,50,power[i]))
 					selected = i;
-					DrawText(TextFormat("%d",i+1),303+i*50,353,15,BLACK);	
+					DrawText(TextFormat("%d",i+1),278+i*55,353,15,BLACK);	
 				}
+		}else if(talk == 29){
+			float offset = (float)overcounter/5-4;
+			if(overcounter >=25){
+				offset = 0;
+			}else if(overcounter < 25){
+				overcounter++;
+				offset = -offset *offset +1;
+			}
+			talkcounter++;
+			DrawRectangle(100,100-offset*30,600,150,BROWN);
+			DrawRectangleLinesEx((Rectangle){100,100-offset*30,600,150},3,DARKBROWN);
+			DrawRectangle(105,105-offset*30,128,128,LIME);		
+			DrawTexture(mommy,105,105-offset*30,WHITE);
+			DrawRectangleLinesEx((Rectangle){105,105-offset*30,128,128},3,DARKGREEN);
+			DrawText(" Would you look at that ! it appears ",240,110-offset*30,19,BLACK);
+			DrawText("YOU DID IT",240+MeasureText(" Would you look at that ! it appears ",19),110-offset*30,19,GREEN);
+			DrawText(" I didnt expect you to be actually competent",240,130-offset*30,19,BLACK);
+			DrawText(" I would say you deserve to live another day <3 ",240,150-offset*30,19,GREEN);
+			if(Button("Continue",280,190-offset*30,100,40,19)){
+				talk = 27;
+				NoWin = true;
+			}
+			if(Button("NEXT",400,190-offset*30,100,40,19)){
+				choice++;
+				choice = choice%3;
+				NoWin = true;
+				talk = 26;
+			}
+			if(Button("Menu",520,190-offset*30,100,40,19)){
+				//around = -50;
+				NoWin = false;
+				choice = -1;
+				talk = 26;
+				ReinitializeMap(Map);
+				StopSound(over);
+				PlaySound(piano);
+				menucounter=-1;
+			}
+		}else if(talk == 30){
+			float offset = (float)overcounter/5-4;
+			if(overcounter >=25){
+				offset = 0;
+			}else if(overcounter < 25){
+				overcounter++;
+				offset = -offset *offset +1;
+			}
+			talkcounter++;
+			DrawRectangle(100,100-offset*30,600,150,BROWN);
+			DrawRectangleLinesEx((Rectangle){100,100-offset*30,600,150},3,DARKBROWN);
+			DrawRectangle(105,105-offset*30,128,128,LIME);		
+			DrawTexture(mommy,105,105-offset*30,WHITE);
+			DrawRectangleLinesEx((Rectangle){105,105-offset*30,128,128},3,DARKGREEN);
+			DrawText(" Pausing , what a disgrace ",240,110-offset*30,19,BLACK);
+		//	DrawText("YOU DID IT",240+MeasureText(" Would you look at that ! it appears ",19),110-offset*30,19,GREEN);
+			DrawText(" already quitting or maybe restarting , ",240,130-offset*30,19,BLACK);
+			DrawText(" pathetic ",240+MeasureText(" already quitting or maybe you restart, ",19),130-offset*30,19,RED);
+			DrawText(" Well never had hope in you ",240,150-offset*30,19,GREEN);
+			if(Button("Continue",280,190-offset*30,100,40,19)||IsKeyPressed(KEY_ESCAPE)){
+				talk = 27;
+			}
+			if(Button("Restart",400,190-offset*30,100,40,19)){
+				talk = 26;
+				NoWin = true;
+			}
+			if(Button("Menu",520,190-offset*30,100,40,19)){
+			//	around = -50;
+				NoWin = false;
+				choice = -1;
+				talk = 26;
+				ReinitializeMap(Map);
+				StopSound(over);
+				PlaySound(piano);
+				menucounter=-1;
+			}
 		}
 		
 		if(around<180 && around>=0){
 			around++;
-        	//DrawRectangle(0,0,800,200,BLACK);
         	DrawRectanglePro((Rectangle){0-around*4,0,800,200},(Vector2){0,0},-around,BLACK);
         	DrawRectanglePro((Rectangle){800+around*4,400,800,200},(Vector2){0,0},180-around,BLACK);
 		}else if(around<-20){
 			StillMenu(title,400,800);
 			around++;
-        	//DrawRectangle(0,0,800,200,BLACK);
         	float smth = (float)(-20-around)/30;
         	int offsetx = -800*smth;
-        	printf("%d\n",offsetx);
+        	//printf("%d\n",offsetx);
         	DrawRectanglePro((Rectangle){offsetx,0,800,200},(Vector2){0,0},0,BLACK);
         	DrawRectanglePro((Rectangle){0-offsetx,200,800,200},(Vector2){0,0},0,BLACK);
 		}else if(around>=-20 && around<0){

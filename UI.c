@@ -15,7 +15,7 @@ bool Button(const char* text, int x, int y, int width, int height, int font){
 
 bool ButtonTexture(int x, int y, int width, int height, Texture2D texture){
 	DrawRectangle(x,y,width,height,(Color){128,239,128,255});
-	DrawRectangleLinesEx((Rectangle){x,y,width,height},3,GREEN);
+	DrawRectangleLinesEx((Rectangle){x,y,width,height},3,GOLD);
 	DrawTexturePro(texture,(Rectangle){0,0,texture.width,texture.width},(Rectangle){x+3,y+3,width-6,height-6},(Vector2){0,0},0,WHITE);
 
 	if(IsMouseButtonReleased(MOUSE_LEFT_BUTTON))
@@ -53,7 +53,7 @@ void DancingText(const char* text,int counter,int x, int y){
 	}
 }
 
-bool Tutorial(int* talk, int* talkcounter, Texture2D mommy){
+bool Tutorial(int* talk, int* talkcounter, Texture2D mommy, Texture2D dommy){
 		if(*talk == 26)
 			return true;
 		if(*talk <4){
@@ -65,6 +65,7 @@ bool Tutorial(int* talk, int* talkcounter, Texture2D mommy){
 			DrawRectangleLinesEx((Rectangle){0,0,800,150},3,DARKBROWN);
 			DrawRectangle(141,18,650,120,LIGHTGRAY);
 		}
+		Texture2D choice = mommy;
 	//	DrawRectangleLinesEx((Rectangle){0,250,800,150},3,DARKBROWN);
 		switch(*talk){
 			case 0:
@@ -92,6 +93,7 @@ bool Tutorial(int* talk, int* talkcounter, Texture2D mommy){
 				if(IsKeyPressed(KEY_ENTER)){
 					*talk = 3;
 				}
+				choice = dommy;
 				break;
 			case 3:
 				DrawText(" In order to perform your work you got nature power ",138,268,19,BLACK);
@@ -221,6 +223,7 @@ bool Tutorial(int* talk, int* talkcounter, Texture2D mommy){
 				if(IsKeyPressed(KEY_ENTER)){
 					*talk = 13;
 				}
+				choice = dommy;
 				break;
 			case 13:
 				DrawText(" A little ",138,26,19,BLACK);
@@ -257,6 +260,7 @@ bool Tutorial(int* talk, int* talkcounter, Texture2D mommy){
 				if(IsKeyPressed(KEY_ENTER)){
 					*talk = 16;
 				}
+				choice = dommy;
 				break;	
 			case 16:
 				DrawText(" the worst humanity creation ",138,26,19,BLACK);
@@ -269,6 +273,7 @@ bool Tutorial(int* talk, int* talkcounter, Texture2D mommy){
 				if(IsKeyPressed(KEY_ENTER)){
 					*talk = 17;
 				}
+				choice = dommy;
 				break;	
 			case 17:
 				DrawText(" the worst humanity creation ",138,26,19,BLACK);
@@ -281,6 +286,7 @@ bool Tutorial(int* talk, int* talkcounter, Texture2D mommy){
 				if(IsKeyPressed(KEY_ENTER)){
 					*talk = 18;
 				}
+				choice = dommy;
 				break;
 			case 18:
 				DrawText(" the worst humanity creation ",138,26,19,BLACK);
@@ -293,6 +299,7 @@ bool Tutorial(int* talk, int* talkcounter, Texture2D mommy){
 				if(IsKeyPressed(KEY_ENTER)){
 					*talk = 19;
 				}
+				choice = dommy;
 				break;
 			case 19:
 				DrawText(" the worst humanity creation ",138,26,19,BLACK);
@@ -305,6 +312,7 @@ bool Tutorial(int* talk, int* talkcounter, Texture2D mommy){
 				if(IsKeyPressed(KEY_ENTER)){
 					*talk = 20;
 				}
+				choice = dommy;
 				break;
 			case 20:
 				DrawText(" This place needs some grass ",138,26,19,BLACK);
@@ -353,6 +361,7 @@ bool Tutorial(int* talk, int* talkcounter, Texture2D mommy){
 				if(IsKeyPressed(KEY_ENTER)){
 					*talk = 24;
 				}
+				choice = dommy;
 				break;
 			case 24:
 				DrawText(" How wonderful, Clean water ! !",138,26,19,BLACK);
@@ -382,11 +391,11 @@ bool Tutorial(int* talk, int* talkcounter, Texture2D mommy){
 		}
 		if(*talk <4){
 			DrawRectangle(10,260,128,128,LIME);		
-			DrawTexture(mommy,10,260,WHITE);
+			DrawTexture(choice,10,260,WHITE);
 			DrawRectangleLinesEx((Rectangle){10,260,128,128},3,DARKGREEN);
 		}else{
 			DrawRectangle(10,10,128,128,LIME);		
-			DrawTexture(mommy,10,010,WHITE);
+			DrawTexture(choice,10,010,WHITE);
 			DrawRectangleLinesEx((Rectangle){10,10,128,128},3,DARKGREEN);
 		}
 		return false;
