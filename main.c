@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "Renderer.h"
 #include "UI.h"
+#include "Menu.h"
 #include <stdio.h>
 
 #define WIDTH 800
@@ -16,24 +17,6 @@ Tile Map[64][64];
 
 bool ColorIsEqual(Color col, Color col2){
 	return col.r == col2.r && col.g == col2.g && col.b == col.b;
-}
-
-bool StartMenuBefore(Texture2D Start,int height,int width){
-    Rectangle s;
-    s.height=(float)Start.height;
-    s.width=(float)Start.width;
-    s.x=0;
-    s.y=0;
-    Rectangle v;
-    v.height=(float)height;
-    v.width=(float)width;
-    v.x=0;
-    v.y=0;
-    Vector2 f={0,0};
-
-    //DrawTexture(Start,0,0,WHITE);
-    DrawTexturePro(Start,s,v,f,0.0f,WHITE);
-    return true;
 }
 
 int main(void){
@@ -52,6 +35,9 @@ int main(void){
 	
 	Sound ost = LoadSound("sprites/Light on a Window.mp3");
 	Sound over = LoadSound("sprites/Game Over.mp3");
+	Sound sea = LoadSound("sprites/Waves.mp3");
+	Sound seagulls = LoadSound("sprites/Seagulls.mp3");
+	Sound piano = LoadSound("sprites/Serenity.mp3");
 	Sound sounds[5] ;
 	Sound water = LoadSoundFromWave(LoadWave("sprites/water.wav"));
 	sounds[0] = LoadSoundFromWave(LoadWave("sprites/magic.wav"));
@@ -75,6 +61,9 @@ int main(void){
 	bildingz[0] = LoadTexture("sprites/Factory.png");
 	bildingz[1] = LoadTexture("sprites/City.png");
 	bildingz[2] = LoadTexture("sprites/ConWater.png");
+
+	Texture2D title = LoadTexture("sprites/DEFOREST.png");
+	Texture2D logo = LoadTexture("sprites/logo.png");
 	
 	Rectangle source= {0,0,32,32};
 	Image image = LoadImage("sprites/maptutorialp.png");
@@ -127,16 +116,30 @@ int main(void){
 	int money = 300000;
 	int selected = 0;
 	int cost =0;
-	int strength =0;
-	int talk = 26;
+	int strength =00;
+	int talk = 0;
 	int talkcounter = 0;
-	int choice = 1;
+	int choice = -2;
 	int overcounter =0;
 	bool Do = false;
+	int around = -50;
 	SetMasterVolume(0.25);
 	SetExitKey(KEY_NULL);
-	
+	int menucounter = -1;
     while (!WindowShouldClose()) {
+    	//StartMenuBefore(title,400,800,&menucounter);
+    	if(choice == -2){
+    		choice = LogoScreen(logo,sea,seagulls);
+    		continue;
+    	}else if(choice == -1){
+    		if(!IsSoundPlaying(piano))
+    			PlaySound(piano);	
+			
+			choice  = StartMenuBefore(title,400,800,&menucounter);
+			continue;
+		}
+		if(IsSoundPlaying(piano))
+    		StopSound(piano);
     	if(!IsSoundPlaying(ost) && talk != 28){
     		StopSound(over);
     		PlaySound(ost);
@@ -153,7 +156,7 @@ int main(void){
         BeginDrawing();
         BeginMode2D(camera);
         ClearBackground(DARKGRAY);
-        Vector2 stuff ;
+        Vector2 stuff;
         switch(talk){
         	case 4:
         		stuff = (Vector2){41,17};
@@ -282,7 +285,7 @@ int main(void){
 			counter = 0;
 			Addframe(Map,&animations,&tiles,true);
 			AffectMap(Map,&tiles);
-			money = 30;
+			money = 300;
 			selected =0;
 		for(int i = 0; i< WORLDSIZE;i++){
 			for(int j =0;j < WORLDSIZE;j++){
@@ -550,6 +553,26 @@ int main(void){
 					selected = i;
 					DrawText(TextFormat("%d",i+1),303+i*50,353,15,BLACK);	
 				}
+		}
+		
+		if(around<180 && around>=0){
+			around++;
+        	//DrawRectangle(0,0,800,200,BLACK);
+        	DrawRectanglePro((Rectangle){0-around*4,0,800,200},(Vector2){0,0},-around,BLACK);
+        	DrawRectanglePro((Rectangle){800+around*4,400,800,200},(Vector2){0,0},180-around,BLACK);
+		}else if(around<-20){
+			StillMenu(title,400,800);
+			around++;
+        	//DrawRectangle(0,0,800,200,BLACK);
+        	float smth = (float)(-20-around)/30;
+        	int offsetx = -800*smth;
+        	printf("%d\n",offsetx);
+        	DrawRectanglePro((Rectangle){offsetx,0,800,200},(Vector2){0,0},0,BLACK);
+        	DrawRectanglePro((Rectangle){0-offsetx,200,800,200},(Vector2){0,0},0,BLACK);
+		}else if(around>=-20 && around<0){
+			around++;
+        	DrawRectanglePro((Rectangle){0,0,800,200},(Vector2){0,0},0,BLACK);
+        	DrawRectanglePro((Rectangle){800,400,800,200},(Vector2){0,0},180,BLACK);
 		}
 		
     	EndDrawing();
