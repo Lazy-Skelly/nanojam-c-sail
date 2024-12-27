@@ -256,6 +256,9 @@ void RemoveBuild(Building** list, int x, int y){
 	}
 }
 
+void DrawFlowers(){
+	
+}
 
 Vector2 PickPoint(Camera2D camera){
 	Vector2 mouse = GetMousePosition();

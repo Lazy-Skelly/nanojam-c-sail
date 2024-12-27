@@ -181,7 +181,7 @@ bool Tutorial(int* talk, int* talkcounter, Texture2D mommy, Texture2D dommy){
 				(*talkcounter)++;
 				DancingText("FOREST",*talkcounter,138+MeasureText(" Cool it's all Grass now for some ",19),26);
 				DrawText(" The highlighted area is where the effect is gonna happen ",138,46,19,BLACK);
-				DrawText(" forest cost 100 and make the tiles grassy",138,66,19,BLACK);
+				DrawText(" forest cost 350 and make the tiles grassy",138,66,19,BLACK);
 				DrawText(" forest works only on grassy land AND GIVES A LOT OF POINTS BACK !",138,86,19,RED);
 				DrawText(" Press enter to continue",538,116,19,BLACK);
 				if(IsKeyPressed(KEY_ENTER)){
@@ -191,9 +191,9 @@ bool Tutorial(int* talk, int* talkcounter, Texture2D mommy, Texture2D dommy){
 			case 10:
 				DrawText(" Same as forests you can use ",138,26,19,BLACK);
 				(*talkcounter)++;
-				DancingText("JUNGLE",*talkcounter,138+MeasureText(" Cool it's all Grass now for some ",19),26);
+				DancingText("JUNGLE",*talkcounter,138+MeasureText(" Same as forests you can use ",19),26);
 				DrawText(" The highlighted area is where the effect is gonna happen ",138,46,19,BLACK);
-				DrawText(" forest cost 200 and make the tiles foresty",138,66,19,BLACK);
+				DrawText(" jungle cost 350 and make the tiles foresty",138,66,19,BLACK);
 				DrawText(" jungle works only on grassy land AND GIVES A LOT OF POINTS BACK !",138,86,19,RED);
 				DrawText(" Press enter to continue",538,116,19,BLACK);
 				if(IsKeyPressed(KEY_ENTER)){
@@ -203,9 +203,9 @@ bool Tutorial(int* talk, int* talkcounter, Texture2D mommy, Texture2D dommy){
 			case 11:
 				DrawText(" Same as forests you can use ",138,26,19,BLACK);
 				(*talkcounter)++;
-				DancingText("JUNGLE",*talkcounter,138+MeasureText(" Cool it's all Grass now for some ",19),26);
+				DancingText("JUNGLE",*talkcounter,138+MeasureText(" Same as forests you can use ",19),26);
 				DrawText(" The highlighted area is where the effect is gonna happen ",138,46,19,BLACK);
-				DrawText(" jungle cost 100 and make the tiles grassy",138,66,19,BLACK);
+				DrawText(" jungle cost 350 and make the tiles grassy",138,66,19,BLACK);
 				DrawText(" jungle works only on grassy land AND GIVES A LOT OF POINTS BACK !",138,86,19,RED);
 				DrawText(" Press enter to continue",538,116,19,BLACK);
 				if(IsKeyPressed(KEY_ENTER)){
@@ -260,7 +260,7 @@ bool Tutorial(int* talk, int* talkcounter, Texture2D mommy, Texture2D dommy){
 				if(IsKeyPressed(KEY_ENTER)){
 					*talk = 16;
 				}
-				choice = dommy;
+			//	choice = dommy;
 				break;	
 			case 16:
 				DrawText(" the worst humanity creation ",138,26,19,BLACK);
@@ -273,7 +273,7 @@ bool Tutorial(int* talk, int* talkcounter, Texture2D mommy, Texture2D dommy){
 				if(IsKeyPressed(KEY_ENTER)){
 					*talk = 17;
 				}
-				choice = dommy;
+			//	choice = dommy;
 				break;	
 			case 17:
 				DrawText(" the worst humanity creation ",138,26,19,BLACK);
@@ -286,7 +286,7 @@ bool Tutorial(int* talk, int* talkcounter, Texture2D mommy, Texture2D dommy){
 				if(IsKeyPressed(KEY_ENTER)){
 					*talk = 18;
 				}
-				choice = dommy;
+			//	choice = dommy;
 				break;
 			case 18:
 				DrawText(" the worst humanity creation ",138,26,19,BLACK);

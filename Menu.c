@@ -90,7 +90,7 @@ int StartMenuBefore(Texture2D Start,int height,int width,int *state){
         }
 
     }
-
+	int j = -1;
   for(int i=0;i<3;i++){
 
         if(CheckCollisionPointRec(mouse,Map[i])){
@@ -101,6 +101,7 @@ int StartMenuBefore(Texture2D Start,int height,int width,int *state){
                 //printf("collision");
 
             Border=RED;
+            j = i;
         }
 
     }
@@ -122,11 +123,11 @@ int StartMenuBefore(Texture2D Start,int height,int width,int *state){
     }
 
     for(int i =0;i<3;i++){
-        DrawRectangleLinesEx(Map[i],3.0f,Border);
+        DrawRectangleLinesEx(Map[i],3.0f,(i==j?RED:WHITE));
+    }
         DrawText("LEVEL 1",Map[0].x+20,Map[0].y+23,28,WHITE);
         DrawText("LEVEL 2",Map[1].x+20,Map[1].y+23,28,WHITE);
         DrawText("LEVEL 3",Map[2].x+20,Map[2].y+23,28,WHITE);
-    }
 
 
     //DrawTexture(Start,0,0,WHITE);

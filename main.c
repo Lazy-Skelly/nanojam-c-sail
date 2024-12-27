@@ -22,11 +22,14 @@ bool ColorIsEqual(Color col, Color col2){
 int main(void){
 	SetTraceLogLevel(LOG_NONE);
     InitWindow(WIDTH,HEIGHT,"DEFOREST");
+   // ToggleBorderlessWindowed();
     InitAudioDevice();   
     SetTargetFPS(60);
 	
 	ReinitializeMap(Map);
 	AffectedTile* tiles = NULL;
+	
+	
 	
 //	printf("halo");
 	int x,y;
@@ -53,6 +56,7 @@ int main(void){
 	Texture2D menu = LoadTexture("sprites/DEFOREST.png");
 	Texture2D mommy = LoadTexture("sprites/dommymommy.png");
 	Texture2D dommy = LoadTexture("sprites/Dommymommydissapointedinyou.png");
+	Texture2D recycle = LoadTexture("sprites/money.png");
 	Texture2D power[5];
 	power[0] = LoadTexture("sprites/rain.png");
 	power[1] = LoadTexture("sprites/seed.png");
@@ -159,7 +163,7 @@ int main(void){
 		FixCamera(&camera);	
 		
 		float percentage = Percentage(Map);
-		if(percentage >0.01 && !NoWin && !builds){
+		if(percentage >0.90 && !NoWin && !builds){
 			talk = 29;
 		}	
 	
@@ -245,12 +249,12 @@ int main(void){
 			case 2:
 				CalculateRange(Map,&tiles,stuff.x,stuff.y,4+strength,FOREST);
 				LimitRange(Map,&tiles,GRASS);
-				cost = 200;
+				cost = 350;
 				break;
 			case 3:
 				CalculateRange(Map,&tiles,stuff.x,stuff.y,4+strength,JUNGLE);
 				LimitRange(Map,&tiles,GRASS);
-				cost = 200;
+				cost = 350;
 				break;
 			case 4:
 				int x =stuff.x;
@@ -432,11 +436,11 @@ int main(void){
 					break;
 				case 2:
 					gain *= 20;
-					gain -= 200;
+					gain -= 350;
 					break;
 				case 3:
 					gain *= 20;
-					gain -= 200;
+					gain -= 350;
 					break;
 				case 4:
 					gain = 0;
@@ -555,9 +559,13 @@ int main(void){
 				overcounter=0;
 				talk = 30;
 			}		
-			DrawRectangle(50,0,10+MeasureText(TextFormat("%d",money),25),52,LIGHTGRAY);
+			DrawRectangle(50,0,10+MeasureText(TextFormat("%d",money),25),52,(Color){153,229,80,255});
 			DrawRectangleLines(50,0,10+MeasureText(TextFormat("%d",money),25),52,GOLD);
 			DrawText(TextFormat("%d",money),55,3,25,BLACK);
+
+		/*	DrawRectangle(50,0,10+MeasureText(TextFormat("%d",money),25),52,LIGHTGRAY);
+			DrawRectangleLines(50,0,10+MeasureText(TextFormat("%d",money),25),52,GOLD);
+			DrawText(TextFormat("%d",money),55,3,25,BLACK);*/
 			Color smth;
 			if(gain<=0){
 				smth = RED;
@@ -632,7 +640,7 @@ int main(void){
 		//	DrawText("YOU DID IT",240+MeasureText(" Would you look at that ! it appears ",19),110-offset*30,19,GREEN);
 			DrawText(" already quitting or maybe restarting , ",240,130-offset*30,19,BLACK);
 			DrawText(" pathetic ",240+MeasureText(" already quitting or maybe you restart, ",19),130-offset*30,19,RED);
-			DrawText(" Well never had hope in you ",240,150-offset*30,19,GREEN);
+			DrawText(" Well never had hope in you anyway <3",240,150-offset*30,19,GREEN);
 			if(Button("Continue",280,190-offset*30,100,40,19)||IsKeyPressed(KEY_ESCAPE)){
 				talk = 27;
 			}
